@@ -1,0 +1,19 @@
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { TelegramService } from './telegram.service';
+import { TelegramController } from './telegram.controller';
+import { Bot } from '../entities/Bot.entity';
+import { Chat } from '../entities/Chat.entity';
+import { User } from '../entities/User.entity';
+import { Message } from '../entities/Message.entity';
+
+@Module({
+  imports: [
+    TypeOrmModule.forFeature([Bot, Chat, User, Message]),
+  ],
+  controllers: [TelegramController],
+  providers: [TelegramService],
+  exports: [TelegramService],
+})
+export class TelegramModule {}
+

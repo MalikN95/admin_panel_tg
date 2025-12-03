@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: admin_telegram_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: X69Sx2y2_SecureDB
+      POSTGRES_DB: admin_telegram
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # - ./admin_telegram_backup.sql:/docker-entrypoint-initdb.d/init.sql
+    # Port 5432 is not exposed to host for security
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - admin_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: admin_telegram_backend
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: X69Sx2y2_SecureDB
+      DB_NAME: admin_telegram
+      JWT_SECRET: ${JWT_SECRET:-change-this-secret-key-in-production}
+      PORT: 3000
+      NODE_ENV: production
+      FRONTEND_URL: http://localhost:5173,http://localhost:8081,http://144.124.249.43:8081
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend/uploads:/app/uploads
+    networks:
+      - admin_network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: admin_telegram_frontend
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend
+    networks:
+      - admin_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  admin_network:
+    driver: bridge
