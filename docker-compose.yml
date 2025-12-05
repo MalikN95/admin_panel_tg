@@ -57,7 +57,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:-change-this-secret-key-in-production}
       PORT: 3000
       NODE_ENV: production
-      FRONTEND_URL: http://localhost:5173,http://localhost:8081,http://144.124.249.43:8081
+      FRONTEND_URL: http://localhost:5173,http://localhost:4000,http://144.124.249.43:4000
     ports:
       - "3000:3000"
     depends_on:
@@ -96,7 +96,7 @@ services:
     container_name: admin_telegram_frontend
     restart: always
     ports:
-      - "8081:80"
+      - "4000:80"
     depends_on:
       backend:
         condition: service_healthy

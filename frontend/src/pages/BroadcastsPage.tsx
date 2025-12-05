@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import type { Broadcast, BroadcastStatistics } from '../types';
 import { getBroadcasts, getBroadcastById, getBroadcastStatistics, sendBroadcast, deleteBroadcast, copyBroadcast } from '../utils/api';
 import { CreateBroadcastModal } from '../components/CreateBroadcastModal';
@@ -26,7 +26,7 @@ export const BroadcastsPage = ({
     activeBroadcastId && activeBroadcastId !== null ? activeBroadcastId : null
   );
   const [selectedBroadcast, setSelectedBroadcast] = useState<Broadcast | null>(null);
-  const [broadcastStatistics, setBroadcastStatistics] = useState<BroadcastStatistics | null>(null);
+  const [, setBroadcastStatistics] = useState<BroadcastStatistics | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [broadcastToDelete, setBroadcastToDelete] = useState<Broadcast | null>(null);
@@ -82,7 +82,7 @@ export const BroadcastsPage = ({
     onBroadcastSelect?.(id);
   };
 
-  const handleSendBroadcast = async (id: string) => {
+  const _handleSendBroadcast = async (id: string) => {
     try {
       await sendBroadcast(id);
       await loadBroadcasts();
@@ -95,7 +95,7 @@ export const BroadcastsPage = ({
     }
   };
 
-  const handleDeleteBroadcast = async (id: string) => {
+  const _handleDeleteBroadcast = async (id: string) => {
     const target = broadcasts.find((b) => b.id === id);
     if (!target) return;
     setBroadcastToDelete(target);
@@ -126,7 +126,7 @@ export const BroadcastsPage = ({
     }
   };
 
-  const handleCopyBroadcast = async (id: string) => {
+  const _handleCopyBroadcast = async (id: string) => {
     try {
       const copiedBroadcast = await copyBroadcast(id);
       await loadBroadcasts();
