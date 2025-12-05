@@ -21,8 +21,8 @@ export const WorkflowsPage = ({
   const [selectedWorkflowId, setSelectedWorkflowId] = useState<string | null>(
     activeWorkflowId && activeWorkflowId !== null ? activeWorkflowId : null
   );
-  const [isCreating] = useState(false);
-  const [error] = useState<string | null>(null);
+  const [, setIsCreating] = useState(false);
+  const [, setError] = useState<string | null>(null);
   const [workflowToDelete, setWorkflowToDelete] = useState<BotWorkflow | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const { showToast } = useToast();

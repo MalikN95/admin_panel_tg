@@ -172,7 +172,7 @@ export const WorkflowEditor = ({ workflow, onClose }: WorkflowEditorProps) => {
 
       await updateWorkflow(workflow.id, {
         name: workflowName,
-        description: workflowDescription,
+        description: workflow.description || '',
         botIds: selectedBotIds,
         nodes: workflowNodes as any,
         connections: workflowConnections as any,

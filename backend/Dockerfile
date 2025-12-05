@@ -20,11 +20,16 @@ COPY . .
 # Собираем приложение
 RUN npm run build
 
-# Удаляем devDependencies после сборки для уменьшения размера образа
-RUN npm prune --production
+# Устанавливаем postgresql-client для pg_isready и выполнения миграций
+RUN apk add --no-cache postgresql-client
 
 # Создаем директорию для загрузок
 RUN mkdir -p /app/uploads && chmod 755 /app/uploads
+
+# Копируем entrypoint скрипт и миграции
+COPY docker-entrypoint.sh /app/docker-entrypoint.sh
+COPY src/migrations /app/src/migrations
+RUN chmod +x /app/docker-entrypoint.sh
 
 # Создаем непривилегированного пользователя
 RUN addgroup -g 1001 -S nodejs && \
@@ -43,5 +48,6 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
   CMD curl -f http://localhost:3000/api/broadcasts/test || exit 1
 
-# Запускаем приложение
+# Запускаем приложение через entrypoint
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
 CMD ["node", "dist/main.js"]
